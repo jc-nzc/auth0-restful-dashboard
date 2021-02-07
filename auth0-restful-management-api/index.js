@@ -4,7 +4,7 @@ const Auth0Manager = require('./Auth0Manager');
 const jwt = require('express-jwt');
 const jwksRsa = require('jwks-rsa');
 
-require('dontenv').config();
+require('dotenv').config();
 const apiPrefix = '/api';
 
 const app = express();
@@ -15,7 +15,7 @@ const checkJwt = jwt({
       rateLimit: true,
       jwksRequestsPerMinute: 5,
       jwksUri: `https://${process.env.CLIENT_DOMAIN}/.well-known/jwks.json`
-    }),
+    }),  
     audience: process.env.API_IDENTIFIER,
     issuer: `https://${process.env.CLIENT_DOMAIN}/`,
     algorithms: ['RS256']
@@ -26,12 +26,12 @@ app.use(checkJwt);
 app.use(bodyParser.json());
 
 app.get(apiPrefix, async (req, res) => {
-    const clientState = await getClients();
+    const clientsState = await getClients();
 
-    res.send(clientState);
+    res.send(clientsState);
 });
 
-app.get(`${apiPrefix}/clients/:clientId`, async(req, res) => {
+app.get(`${apiPrefix}/clients/:clientId`, async (req, res) => {
     const clientState = await getClient(req.params.clientId);
 
     res.send(clientState);
